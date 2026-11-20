@@ -1,31 +1,43 @@
-# Searchmont History — rebuilt site
+# Searchmont History: rebuilt site
 
 A simple, fast rebuild of searchmonthistory.ca that works on a PC, a phone, and the
-community-centre touch screen. It is plain HTML/CSS/JavaScript: no build step, no Wix.
+community-centre touch screen. It is plain HTML/CSS/JavaScript, hosted free on GitHub Pages.
+
+Every topic and section is a real web page with its own address, title and description,
+so search engines can find it. Text in newspaper clippings and documents has been read
+from the images automatically (OCR) and appears under each one ("Read the text in this
+image"), so it can be read, searched on the site, and found by Google.
 
 ## What's here
 
 | File / folder | What it is |
 |---|---|
-| `index.html`  | The page shell (header, menu, photo viewer) |
-| `style.css`   | All styling |
-| `app.js`      | Builds the pages from `data.js` and runs the photo viewer |
-| `data.js`     | All the content: topics → sections → captions + photos/films |
-| `images/`     | Full-size photos (max 2000px) |
-| `thumbs/`     | Small versions used in grids |
-| `video/`      | The short films (720p) |
+| `data/site.json` | **All the content**: topics → sections → stories (caption + photos/films + text read from each image) |
+| `build.py`       | Turns `data/site.json` into the web pages. Run it after any content change |
+| `index.html`, `townsite/`, `lumber/`, … | The generated pages (don't edit by hand; they're overwritten by `build.py`) |
+| `search/`, `search-index.json` | The site search page and its data |
+| `sitemap.xml`, `robots.txt` | Help search engines find every page |
+| `style.css`, `app.js` | Styling; photo viewer, menu, search and kiosk mode |
+| `images/`, `thumbs/`, `video/` | Full-size photos, small versions, and films |
 
-## Editing content
+## Changing content
 
-Open `data.js`. Each section has a list of `stories`; each story has a `caption`
-and a list of `media` (photos use `"src": "<file in images/>"`). To add a photo, put
-the file in `images/` (and a smaller copy with the same name in `thumbs/`), then add an
-entry to the right story.
+1. Edit `data/site.json`: captions are in `caption`, the text read from an image is in that photo's `text`.
+   Correcting OCR mistakes there improves both the page and search results.
+2. To add a photo, put it in `images/` and a smaller copy (about 640px) with the same name in `thumbs/`,
+   then add `{"src": "name.jpg", "w": width, "h": height}` to a story's `media` list.
+3. Run `python build.py`, then commit and push.
+
+## When the domain moves to searchmonthistory.ca
+
+Change `BASE_URL` at the top of `build.py` to `https://searchmonthistory.ca/`, run
+`python build.py`, commit and push. Then submit `https://searchmonthistory.ca/sitemap.xml`
+in Google Search Console so Google indexes every page quickly.
 
 ## Touch screen (kiosk) mode
 
-Open the site with `?kiosk` on the end of the address, e.g. `https://example.org/?kiosk`.
-After 15 minutes with no touches it returns to the home page.
+Open the site with `?kiosk` on the end of the address. After 15 minutes with no touches
+it returns to the home page.
 
 ## Viewing locally
 
@@ -34,10 +46,3 @@ python -m http.server 8000
 ```
 
 Then open http://localhost:8000
-
-## Publishing on GitHub Pages
-
-1. Push this folder to a GitHub repository.
-2. In the repository, go to Settings → Pages, choose "Deploy from a branch", branch `main`, folder `/ (root)`.
-3. The site appears at `https://<username>.github.io/<repo>/`. A custom domain
-   (searchmonthistory.ca) can be pointed at it under the same settings page.

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://searchmont-analytics.github.io/searchmont-history-ca/sitemap.xml
